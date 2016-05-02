@@ -46,7 +46,7 @@ app.use(passport.session());
 app.get('/', function (req, res, next) {
     if (req.user) {
         github.team(1991469).membership(req.user.username, function (err, isMember) {
-            if (err && err.message && err.message == "Not Found") {
+            if (err && err.message && err.message != "Not Found") {
                 return next(err);
             }
             res.render('index', {user: req.user.username, added: isMember||false});
