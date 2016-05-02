@@ -110,7 +110,8 @@ if (app.get('env') === 'development') {
         if (req.accepts('json')) {
             res.json({
                 success: false,
-                message: err.message
+                message: err.message,
+				error: err
             });
         } else {
             res.render('error', {
