@@ -46,10 +46,10 @@ app.use(passport.session());
 app.get('/', function (req, res, next) {
     if (req.user) {
         github.team(1991469).membership(req.user.username, function (err, isMember) {
-            if (err) {
+            if (err && err.message && err.message == "Not Found") {
                 return next(err);
             }
-            res.render('index', {user: req.user.username, added: isMember});
+            res.render('index', {user: req.user.username, added: isMember||false});
         });
         return;
     }
@@ -68,7 +68,7 @@ app.get('/logout', function (req, res) {
 
 app.post('/invite', require('connect-ensure-login').ensureLoggedIn(), function (req, res) {
     github.team(1991469).membership(req.user.username, function (err, isMember) {
-        if(!isMember) {
+        if(err.messgae="Not Found"||!isMember) {
             github.team(1991469).addMembership(req.user.username, function (err, added) {
                 res.json({success: added, message: (err ? err.message : "")});
             });
@@ -110,8 +110,7 @@ if (app.get('env') === 'development') {
         if (req.accepts('json')) {
             res.json({
                 success: false,
-                message: err.message,
-				error: err
+                message: err.message
             });
         } else {
             res.render('error', {
